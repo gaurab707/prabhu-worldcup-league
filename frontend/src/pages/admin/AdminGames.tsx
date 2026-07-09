@@ -14,7 +14,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import ScoreboardIcon from "@mui/icons-material/Scoreboard";
 import SyncIcon from "@mui/icons-material/Sync";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
-import { fmt, fromInput, nowInput } from "../../lib/time";
+import { fmt, toInput, fromInput, nowInput } from "../../lib/time";
 import { matchApi, adminApi, errMsg } from "../../api/client";
 import type { Match } from "../../api/types";
 import { GlassCard, PageHeader, TeamFlag } from "../../components/ui";
@@ -185,7 +185,7 @@ function ResultDialog({ match, onClose, onSubmit, loading }: any) {
   if (match && f.__id !== match.id) {
     setF({ __id: match.id, home_score: match.home_score ?? 0, away_score: match.away_score ?? 0,
       is_penalty: match.is_penalty, home_penalty: match.home_penalty ?? 0, away_penalty: match.away_penalty ?? 0,
-      status: match.status });
+      status: match.status, kickoff_at: toInput(match.kickoff_at) });
   }
   if (!match) return null;
   const set = (k: string) => (e: any) => setF({ ...f, [k]: e.target.value });
@@ -207,6 +207,9 @@ function ResultDialog({ match, onClose, onSubmit, loading }: any) {
           </Stack>
         )}
         <Divider sx={{ my: 2 }} />
+        <TextField label="Kickoff (Nepal time)" type="datetime-local" fullWidth value={f.kickoff_at || ""}
+          onChange={set("kickoff_at")} InputLabelProps={{ shrink: true }} sx={{ mb: 2 }}
+          helperText="Fix the fixture time here. Predictions stay open until this time is reached." />
         <TextField select label="Status" fullWidth value={f.status} onChange={set("status")}>
           {["scheduled", "live", "finished", "postponed", "cancelled"].map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
         </TextField>
@@ -216,8 +219,8 @@ function ResultDialog({ match, onClose, onSubmit, loading }: any) {
         <Button variant="contained" disabled={loading} onClick={() => onSubmit(match.id, {
           home_score: Number(f.home_score), away_score: Number(f.away_score),
           is_penalty: !!f.is_penalty, home_penalty: Number(f.home_penalty), away_penalty: Number(f.away_penalty),
-          status: f.status,
-        })}>Save result</Button>
+          status: f.status, ...(f.kickoff_at ? { kickoff_at: fromInput(f.kickoff_at) } : {}),
+        })}>Save</Button>
       </DialogActions>
     </Dialog>
   );

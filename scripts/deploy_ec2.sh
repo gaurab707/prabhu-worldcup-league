@@ -47,9 +47,6 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y python3 python3-venv python3-pip nginx curl ca-certificates
 
-# App runs in Nepal time.
-timedatectl set-timezone Asia/Kathmandu 2>/dev/null || true
-
 # Node.js 20 LTS via NodeSource (only if node is missing or too old)
 NEED_NODE=1
 if command -v node >/dev/null 2>&1; then
@@ -148,7 +145,6 @@ Type=simple
 User=$RUN_USER
 WorkingDirectory=$BACKEND_DIR
 Environment=PYTHONUNBUFFERED=1
-Environment=TZ=Asia/Kathmandu
 ExecStart=$BACKEND_DIR/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
 Restart=always
 RestartSec=3

@@ -26,7 +26,7 @@ WEB_ROOT="/var/www/worldcup"
 SERVICE_NAME="worldcup-api"
 SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
 RUN_USER="${SUDO_USER:-$USER}"
-TZONE="Asia/Kathmandu"
+SERVER_TZ="UTC"   # backend runs in UTC (predictable); the frontend DISPLAYS Nepal time
 
 echo "=============================================================="
 echo " Updating World Cup League  (data-safe)"
@@ -39,23 +39,24 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # ---------------------------------------------------------------------------
-# 1. Timezone -> Nepal
+# 1. Backend clock -> UTC  (fixes the synced-time / premature-lock bug)
+#    The app still SHOWS Nepal time — that conversion happens in the browser.
+#    Running the backend in Nepal time made the match scraper parse some feed
+#    timestamps in the wrong zone, which is why games looked "live" too early.
 # ---------------------------------------------------------------------------
-echo "--> [1/4] Setting timezone to $TZONE…"
-timedatectl set-timezone "$TZONE" 2>/dev/null || echo "    (timedatectl unavailable — skipping system clock change)"
+echo "--> [1/4] Setting backend clock to $SERVER_TZ…"
+timedatectl set-timezone "$SERVER_TZ" 2>/dev/null || echo "    (timedatectl unavailable — skipping system clock change)"
 
-# Make sure the API service also runs in Nepal time (idempotent).
 if [[ -f "$SERVICE_FILE" ]]; then
-  if ! grep -q "Environment=TZ=$TZONE" "$SERVICE_FILE"; then
-    # Insert the TZ env right after the [Service] line.
-    sed -i "/^\[Service\]/a Environment=TZ=$TZONE" "$SERVICE_FILE"
-    echo "    Added TZ to $SERVICE_NAME service."
-  else
-    echo "    Service already has TZ set."
+  # Remove any TZ override a previous version of this script may have added,
+  # so the API process uses the (UTC) system clock.
+  if grep -q "^Environment=TZ=" "$SERVICE_FILE"; then
+    sed -i '/^Environment=TZ=/d' "$SERVICE_FILE"
+    echo "    Removed timezone override from the $SERVICE_NAME service."
   fi
   systemctl daemon-reload
 else
-  echo "    NOTE: $SERVICE_FILE not found — if you deployed differently, set TZ=$TZONE on your API process."
+  echo "    NOTE: $SERVICE_FILE not found — if you deployed differently, run your API in UTC."
 fi
 
 # ---------------------------------------------------------------------------
@@ -104,7 +105,7 @@ PUBLIC_IP="$(curl -s --max-time 4 http://169.254.169.254/latest/meta-data/public
 
 echo "=============================================================="
 echo " ✅ Update complete.   API health: $API_OK"
-echo "    Timezone: $(date '+%Z %z')  —  all times now show in Nepal time."
+echo "    Backend clock: $(date '+%Z %z').  The app DISPLAYS Nepal time in the browser."
 echo "    Open:  http://$PUBLIC_IP/    (hard-refresh: Ctrl/Cmd+Shift+R)"
 echo "    Your database, uploads and .env were left untouched."
 echo "=============================================================="

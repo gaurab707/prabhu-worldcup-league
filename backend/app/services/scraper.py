@@ -105,10 +105,19 @@ _STATUS_MAP = {
 
 
 def _parse_kickoff(event: dict) -> Optional[datetime]:
+    """Parse an event's kickoff into an aware UTC datetime.
+
+    TheSportsDB gives times in UTC. We must NEVER use ``.astimezone()`` on a
+    naive value here: that would interpret it in the *server's* local timezone,
+    so the same data would be parsed differently depending on how the box clock
+    is set. Instead, naive values are labelled UTC directly, and aware values
+    are converted to UTC. The result is independent of the server timezone.
+    """
     ts = event.get("strTimestamp")
     if ts:
         try:
-            return datetime.fromisoformat(ts.replace("Z", "+00:00")).astimezone(timezone.utc)
+            dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            return dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt.astimezone(timezone.utc)
         except ValueError:
             pass
     date_s, time_s = event.get("dateEvent"), event.get("strTime") or "00:00:00"
