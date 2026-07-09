@@ -5,7 +5,22 @@ import type {
   PublicSettings, StaffDashboard, Team, User, Winner,
 } from "./types";
 
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// Resolve the API base URL.
+//   * If VITE_API_URL is explicitly set (e.g. the two-port method), use it.
+//   * Otherwise, in a production build (served by nginx) talk to the SAME origin
+//     so requests go to "/api" and nginx proxies them to the backend. This is
+//     what makes access via the EC2 public IP work with no IP baked in.
+//   * In dev (`npm run dev`) default to the local backend on :8000.
+// NOTE: we must NOT use `|| "http://localhost:8000"` here — an empty string is
+// falsy, so that would wrongly force every deployed browser to call its OWN
+// localhost:8000 (which is why login failed after deploying).
+const _configuredApiUrl = import.meta.env.VITE_API_URL as string | undefined;
+export const API_URL =
+  _configuredApiUrl !== undefined && _configuredApiUrl !== ""
+    ? _configuredApiUrl
+    : import.meta.env.PROD
+      ? "" // same-origin: axios baseURL becomes "/api"
+      : "http://localhost:8000";
 const TOKEN_KEY = "pcwc_token";
 
 export const tokenStore = {
