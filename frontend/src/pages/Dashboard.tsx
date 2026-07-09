@@ -12,7 +12,7 @@ import PublicIcon from "@mui/icons-material/Public";
 import LockIcon from "@mui/icons-material/Lock";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import dayjs from "dayjs";
+import { fmt } from "../lib/time";
 import { userApi, matchApi, leaderboardApi, championApi } from "../api/client";
 import { GlassCard, StatCard, PageHeader, CardSkeleton, TeamFlag } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
@@ -71,7 +71,7 @@ function ChampionBanner() {
               <Typography fontWeight={700}>Predict the World Cup champion 🏆</Typography>
               <Typography variant="body2" color="text.secondary">
                 One pick, locked forever. Win <b>{st.bonus_points} bonus points</b>{st.prize_amount ? ` + Rs. ${st.prize_amount}` : ""} if you&rsquo;re right.
-                {st.deadline && <> Closes {dayjs(st.deadline).format("MMM D, HH:mm")}.</>}
+                {st.deadline && <> Closes {fmt(st.deadline, "MMM D, HH:mm")}.</>}
               </Typography>
             </Box>
           </Stack>
@@ -93,7 +93,7 @@ export default function Dashboard() {
   const { data: board } = useQuery({ queryKey: ["leaderboard", "top5"], queryFn: () => leaderboardApi.get({ limit: 5 }) });
 
   const chartData = (dash?.points_over_time || []).map((p) => ({
-    date: dayjs(p.date).format("MMM D"), points: p.points,
+    date: fmt(p.date, "MMM D"), points: p.points,
   }));
 
   return (
@@ -195,7 +195,7 @@ export default function Dashboard() {
                       </Stack>
                     </Stack>
                     <Typography variant="caption" color="text.secondary" display="block" textAlign="center">
-                      {dayjs(m.kickoff_at).format("MMM D · HH:mm")}
+                      {fmt(m.kickoff_at, "MMM D · HH:mm")}
                     </Typography>
                     {m.my_prediction ? (
                       <Chip size="small" color="success" sx={{ mt: 1, width: "100%" }}

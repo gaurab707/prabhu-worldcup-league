@@ -8,7 +8,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { leaderboardApi } from "../api/client";
 import { GlassCard, PageHeader } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
-import { BRAND } from "../theme/theme";
+import { BRAND, clearTableSx, tableCardSx } from "../theme/theme";
 
 const MEDAL = ["#FFD54F", "#B0BEC5", "#D98A56"];
 
@@ -35,11 +35,11 @@ export default function Leaderboard() {
         </ToggleButtonGroup>
       </Stack>
 
-      <GlassCard sx={{ p: 0, overflow: "hidden" }}>
+      <GlassCard sx={tableCardSx(theme)}>
         <Box sx={{ overflowX: "auto" }}>
-          <Table size="small" sx={{ minWidth: 720 }}>
+          <Table size="small" sx={{ minWidth: 720, ...clearTableSx(theme) }}>
             <TableHead>
-              <TableRow sx={{ "& th": { fontWeight: 700, color: "text.secondary", borderColor: theme.palette.divider } }}>
+              <TableRow>
                 <TableCell sx={{ pl: 3 }}>#</TableCell>
                 <TableCell>Player</TableCell>
                 <TableCell>Dept</TableCell>
@@ -55,8 +55,7 @@ export default function Leaderboard() {
                 const me = r.user_id === user?.id;
                 return (
                   <TableRow key={r.user_id}
-                    sx={{ background: me ? `${BRAND.azure}14` : "transparent",
-                          "& td": { borderColor: theme.palette.divider } }}>
+                    sx={me ? { "& td": { background: `${BRAND.azure}22`, fontWeight: 700 } } : undefined}>
                     <TableCell sx={{ pl: 3 }}>
                       <Avatar sx={{ width: 26, height: 26, fontSize: 13, fontWeight: 800,
                         bgcolor: r.rank <= 3 ? MEDAL[r.rank - 1] : "transparent",

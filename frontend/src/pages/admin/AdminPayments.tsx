@@ -9,7 +9,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
-import dayjs from "dayjs";
+import { fmt } from "../../lib/time";
 import { paymentApi, userApi, assetUrl, errMsg } from "../../api/client";
 import type { Payment, User } from "../../api/types";
 import { GlassCard, PageHeader } from "../../components/ui";
@@ -66,7 +66,7 @@ export default function AdminPayments() {
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ mb: 1.5 }}>
                   <Typography variant="body2" color="text.secondary">Submitted</Typography>
-                  <Typography variant="body2">{dayjs(p.created_at).format("MMM D, HH:mm")}</Typography>
+                  <Typography variant="body2">{fmt(p.created_at, "MMM D, HH:mm")}</Typography>
                 </Stack>
 
                 <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden", border: `1px solid ${theme.palette.divider}`, mb: 1.5, minHeight: 120, display: "grid", placeItems: "center", background: theme.palette.mode === "dark" ? "#0B1220" : "#F1F5F9" }}>

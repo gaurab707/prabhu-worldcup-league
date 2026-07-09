@@ -11,7 +11,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
-import dayjs from "dayjs";
+import { fmt } from "../lib/time";
 import { championApi, errMsg } from "../api/client";
 import type { Team } from "../api/types";
 import { GlassCard, PageHeader, TeamFlag, CardSkeleton } from "../components/ui";
@@ -173,7 +173,7 @@ export default function Champion() {
                 <Chip size="small" icon={<LockIcon sx={{ fontSize: 15 }} />} label="Locked" color="warning" />
               </Stack>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                Your champion pick, locked on {dayjs(myPick.created_at).format("MMM D, YYYY")}. This cannot be changed.
+                Your champion pick, locked on {fmt(myPick.created_at, "MMM D, YYYY")}. This cannot be changed.
               </Typography>
             </Box>
           </Stack>
@@ -193,7 +193,7 @@ export default function Champion() {
           </Stack>
           <Alert severity="warning" icon={<LockIcon />} sx={{ mb: 2 }}>
             You can only pick <b>once</b>, and your choice is <b>permanent</b> — it can never be changed.
-            {status.deadline && <> Picks close <b>{dayjs(status.deadline).format("ddd MMM D, HH:mm")}</b>.</>}
+            {status.deadline && <> Picks close <b>{fmt(status.deadline, "ddd MMM D, HH:mm")}</b>.</>}
           </Alert>
           <TeamPicker teams={teams || []} selectedId={selected?.id ?? null} onSelect={setSelected} />
           <Stack direction="row" justifyContent="flex-end" sx={{ mt: 2 }}>

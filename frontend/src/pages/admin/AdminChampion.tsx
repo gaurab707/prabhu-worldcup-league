@@ -10,7 +10,7 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import GavelIcon from "@mui/icons-material/Gavel";
 import ReplayIcon from "@mui/icons-material/Replay";
 import GroupsIcon from "@mui/icons-material/Groups";
-import dayjs from "dayjs";
+import { toInput, fromInput } from "../../lib/time";
 import { championApi, errMsg } from "../../api/client";
 import type { Team } from "../../api/types";
 import { GlassCard, PageHeader, TeamFlag } from "../../components/ui";
@@ -35,7 +35,7 @@ export default function AdminChampion() {
   useEffect(() => {
     if (summary) {
       setOpen(summary.is_open);
-      setDeadline(summary.deadline ? dayjs(summary.deadline).format("YYYY-MM-DDTHH:mm") : "");
+      setDeadline(toInput(summary.deadline));
       setBonus(summary.bonus_points);
       setPrize(summary.prize ?? "");
       setPrizeAmount(summary.prize_amount ?? 0);
@@ -50,7 +50,7 @@ export default function AdminChampion() {
   const saveConfig = useMutation({
     mutationFn: () => championApi.updateConfig({
       is_open: open,
-      deadline: deadline ? new Date(deadline).toISOString() : undefined,
+      deadline: deadline ? fromInput(deadline) : undefined,
       clear_deadline: !deadline,
       bonus_points: Number(bonus),
       prize: prize,

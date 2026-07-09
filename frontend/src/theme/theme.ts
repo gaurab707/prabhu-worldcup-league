@@ -126,3 +126,50 @@ export const glassSx = (theme: Theme) => ({
   border: `1px solid ${theme.palette.divider}`,
   borderRadius: 20,
 });
+
+/**
+ * A high-contrast, "spreadsheet clear" table style: solid header, visible row
+ * AND column gridlines, zebra striping and a clear hover — much easier to read
+ * than the default faint glass tables. Apply on a <Table sx={clearTableSx(theme)}>.
+ */
+export const clearTableSx = (theme: Theme) => {
+  const isDark = theme.palette.mode === "dark";
+  const grid = isDark ? "rgba(255,255,255,0.16)" : "rgba(15,23,42,0.16)";
+  const strong = isDark ? "rgba(255,255,255,0.32)" : "rgba(15,23,42,0.30)";
+  const headBg = isDark ? "rgba(255,255,255,0.09)" : "rgba(15,23,42,0.06)";
+  const stripe = isDark ? "rgba(255,255,255,0.035)" : "rgba(15,23,42,0.028)";
+  const hover = isDark ? "rgba(59,130,246,0.16)" : "rgba(59,130,246,0.09)";
+  return {
+    borderCollapse: "collapse" as const,
+    "& th": {
+      fontWeight: 700,
+      fontSize: 12.5,
+      letterSpacing: "0.03em",
+      textTransform: "uppercase" as const,
+      color: theme.palette.text.primary,
+      backgroundColor: headBg,
+      borderBottom: `2px solid ${strong}`,
+      borderRight: `1px solid ${grid}`,
+    },
+    "& td": {
+      color: theme.palette.text.primary,
+      borderBottom: `1px solid ${grid}`,
+      borderRight: `1px solid ${grid}`,
+    },
+    "& th:last-of-type, & td:last-of-type": { borderRight: 0 },
+    "& tbody tr:nth-of-type(even)": { backgroundColor: stripe },
+    "& tbody tr:hover": { backgroundColor: hover },
+    "& tbody tr:last-of-type td": { borderBottom: 0 },
+  };
+};
+
+/** Solid, minimally-rounded wrapper for tables (crisp text, no glass blur). */
+export const tableCardSx = (theme: Theme) => ({
+  p: 0,
+  overflow: "hidden",
+  borderRadius: "10px",
+  background: theme.palette.background.paper,
+  backdropFilter: "none",
+  WebkitBackdropFilter: "none",
+  border: `1px solid ${theme.palette.divider}`,
+});

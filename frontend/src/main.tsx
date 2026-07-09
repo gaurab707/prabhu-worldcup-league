@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
 import { ColorModeProvider } from "./context/ColorModeContext";
 import { AuthProvider } from "./context/AuthContext";
+import "./lib/time"; // configure dayjs to render all times in Nepal time
 import App from "./App";
 
 const queryClient = new QueryClient({

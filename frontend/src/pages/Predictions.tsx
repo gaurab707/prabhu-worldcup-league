@@ -9,7 +9,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import PlaceIcon from "@mui/icons-material/Place";
 import SaveIcon from "@mui/icons-material/Save";
-import dayjs from "dayjs";
+import { fmt } from "../lib/time";
 import { matchApi, predictionApi, errMsg } from "../api/client";
 import type { Match } from "../api/types";
 import { GlassCard, PageHeader, TeamFlag, CardSkeleton } from "../components/ui";
@@ -118,7 +118,7 @@ function PredictionCard({ match }: { match: Match }) {
 
       <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mt: 1.5, color: "text.secondary" }}>
         <PlaceIcon sx={{ fontSize: 15 }} />
-        <Typography variant="caption" noWrap>{match.venue || "TBD"} · {dayjs(match.kickoff_at).format("ddd MMM D, HH:mm")}</Typography>
+        <Typography variant="caption" noWrap>{match.venue || "TBD"} · {fmt(match.kickoff_at, "ddd MMM D, HH:mm")}</Typography>
       </Stack>
 
       <Button fullWidth variant="contained" startIcon={<SaveIcon />} sx={{ mt: 1.5 }}

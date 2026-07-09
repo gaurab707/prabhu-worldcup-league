@@ -14,10 +14,11 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import ScoreboardIcon from "@mui/icons-material/Scoreboard";
 import SyncIcon from "@mui/icons-material/Sync";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
-import dayjs from "dayjs";
+import { fmt, fromInput, nowInput } from "../../lib/time";
 import { matchApi, adminApi, errMsg } from "../../api/client";
 import type { Match } from "../../api/types";
 import { GlassCard, PageHeader, TeamFlag } from "../../components/ui";
+import { clearTableSx, tableCardSx } from "../../theme/theme";
 
 const STATUS_COLORS: any = { scheduled: "primary", live: "warning", finished: "success", postponed: "default", cancelled: "error" };
 
@@ -74,11 +75,11 @@ export default function AdminGames() {
           </Stack>
         } />
 
-      <GlassCard sx={{ p: 0, overflow: "hidden" }}>
+      <GlassCard sx={tableCardSx(theme)}>
         <Box sx={{ overflowX: "auto" }}>
-          <Table size="small" sx={{ minWidth: 820 }}>
+          <Table size="small" sx={{ minWidth: 820, ...clearTableSx(theme) }}>
             <TableHead>
-              <TableRow sx={{ "& th": { fontWeight: 700, color: "text.secondary", borderColor: theme.palette.divider } }}>
+              <TableRow>
                 <TableCell sx={{ pl: 3 }}>Fixture</TableCell>
                 <TableCell>Round</TableCell>
                 <TableCell>Kickoff</TableCell>
@@ -89,7 +90,7 @@ export default function AdminGames() {
             </TableHead>
             <TableBody>
               {(matches || []).map((m) => (
-                <TableRow key={m.id} sx={{ "& td": { borderColor: theme.palette.divider } }}>
+                <TableRow key={m.id}>
                   <TableCell sx={{ pl: 3 }}>
                     <Stack direction="row" spacing={1} alignItems="center">
                       <TeamFlag team={m.home_team} size={26} />
@@ -98,7 +99,7 @@ export default function AdminGames() {
                     </Stack>
                   </TableCell>
                   <TableCell><Typography variant="body2" color="text.secondary">{m.round_name || "—"}</Typography></TableCell>
-                  <TableCell><Typography variant="body2">{dayjs(m.kickoff_at).format("MMM D, HH:mm")}</Typography></TableCell>
+                  <TableCell><Typography variant="body2">{fmt(m.kickoff_at, "MMM D, HH:mm")}</Typography></TableCell>
                   <TableCell align="center">
                     {m.home_score != null ? (
                       <Typography fontWeight={700}>{m.home_score}-{m.away_score}{m.is_penalty ? ` (${m.home_penalty}-${m.away_penalty}p)` : ""}</Typography>
@@ -156,7 +157,7 @@ export default function AdminGames() {
 }
 
 function CreateDialog({ open, onClose, onSubmit, loading }: any) {
-  const [f, setF] = useState({ home_team: "", away_team: "", kickoff_at: dayjs().add(1, "day").format("YYYY-MM-DDTHH:mm"), venue: "", round_name: "Group Stage", group_name: "" });
+  const [f, setF] = useState({ home_team: "", away_team: "", kickoff_at: nowInput(1), venue: "", round_name: "Group Stage", group_name: "" });
   const set = (k: string) => (e: any) => setF({ ...f, [k]: e.target.value });
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -173,7 +174,7 @@ function CreateDialog({ open, onClose, onSubmit, loading }: any) {
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button variant="contained" disabled={loading || !f.home_team || !f.away_team}
-          onClick={() => onSubmit({ ...f, kickoff_at: new Date(f.kickoff_at).toISOString() })}>Create</Button>
+          onClick={() => onSubmit({ ...f, kickoff_at: fromInput(f.kickoff_at) })}>Create</Button>
       </DialogActions>
     </Dialog>
   );

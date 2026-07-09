@@ -9,6 +9,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { userApi, errMsg } from "../../api/client";
 import type { User } from "../../api/types";
 import { GlassCard, PageHeader } from "../../components/ui";
+import { clearTableSx, tableCardSx } from "../../theme/theme";
 
 const STATUS_COLORS: any = { active: "success", pending: "warning", rejected: "error", disabled: "default" };
 const PAY_COLORS: any = { verified: "success", pending: "warning", rejected: "error" };
@@ -36,11 +37,11 @@ export default function AdminUsers() {
         sx={{ maxWidth: 340, mb: 2.5 }}
         InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment> }} />
 
-      <GlassCard sx={{ p: 0, overflow: "hidden" }}>
+      <GlassCard sx={tableCardSx(theme)}>
         <Box sx={{ overflowX: "auto" }}>
-          <Table size="small" sx={{ minWidth: 820 }}>
+          <Table size="small" sx={{ minWidth: 820, ...clearTableSx(theme) }}>
             <TableHead>
-              <TableRow sx={{ "& th": { fontWeight: 700, color: "text.secondary", borderColor: theme.palette.divider } }}>
+              <TableRow>
                 <TableCell sx={{ pl: 3 }}>Name</TableCell>
                 <TableCell>Department</TableCell>
                 <TableCell>Role</TableCell>
@@ -51,7 +52,7 @@ export default function AdminUsers() {
             </TableHead>
             <TableBody>
               {filtered.map((u: User) => (
-                <TableRow key={u.id} sx={{ "& td": { borderColor: theme.palette.divider } }}>
+                <TableRow key={u.id}>
                   <TableCell sx={{ pl: 3 }}>
                     <Stack direction="row" spacing={1.25} alignItems="center">
                       <Avatar sx={{ width: 32, height: 32, fontSize: 14, bgcolor: "primary.main" }}>{u.full_name[0]}</Avatar>
