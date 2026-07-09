@@ -6,6 +6,7 @@ import confetti from "canvas-confetti";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { winnerApi, settingsApi } from "../api/client";
 import { GlassCard, PageHeader } from "../components/ui";
+import { PlayerBreakdown } from "../components/PointsBreakdown";
 import { BRAND } from "../theme/theme";
 
 const PODIUM = [
@@ -94,6 +95,37 @@ export default function WinnerPage() {
           );
         })}
       </Grid>
+
+      {/* Transparency: how each winner earned their points */}
+      <Box sx={{ maxWidth: 860, mx: "auto" }}>
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+          <EmojiEventsIcon color="secondary" />
+          <Typography variant="h6">How the winners earned their points</Typography>
+        </Stack>
+        <Stack spacing={1.5}>
+          {[1, 2, 3].map((pos) => {
+            const w = byPos(pos);
+            if (!w) return null;
+            return (
+              <GlassCard key={w.id} sx={{ p: 2 }}>
+                <Stack direction="row" spacing={1.5} alignItems="center">
+                  <Typography sx={{ fontSize: 24 }}>{PODIUM[pos - 1]?.medal}</Typography>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography fontWeight={700} noWrap>{w.name}</Typography>
+                    {w.prize && (
+                      <Typography variant="caption" color="text.secondary">
+                        {w.prize}{w.prize_amount ? ` · Rs. ${w.prize_amount}` : ""}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Chip color="secondary" label={`${w.points} pts`} />
+                </Stack>
+                <PlayerBreakdown userId={w.user_id} />
+              </GlassCard>
+            );
+          })}
+        </Stack>
+      </Box>
     </Box>
   );
 }

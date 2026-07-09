@@ -95,8 +95,8 @@ For each game in the list you can:
   other's picks for that game.
 
 Other admin areas: verify staff payments, upload the payment QR and company logo,
-run the **Champion Prize** for the World Cup winner prediction (below), and publish
-the top-3 **winners** at the end.
+run the **Champion Prize** for the World Cup winner prediction (below), and run
+the end-of-tournament **Winners & Prizes** flow (below).
 
 ---
 
@@ -114,6 +114,35 @@ the top-3 **winners** at the end.
   confirm. Everyone who picked it is instantly awarded the bonus, and the
   Leaderboard updates. Made a mistake? **Undo declaration** clears the bonuses and
   re-opens picking so you can redeclare.
+
+---
+
+### 3c. Running the ADMIN side — Winners & Prizes (end of tournament)
+
+**Admin → Winners & Prizes** is a two-step, private-then-public flow:
+
+1. **Generate podium & prizes** — captures the current top three from the
+   leaderboard as a **private draft** (only admins can see it). The system
+   auto-fills a suggested prize for each place and a suggested cash amount using a
+   **50 / 30 / 20 split of the prize pool** (pool = paid players × entry fee).
+2. **Set the prizes** — edit each winner's prize name, amount and an optional note.
+   The system's amounts are only suggestions; you decide the final prize.
+3. **Check the points breakdown** — expand *How these points were earned* under
+   any winner to see, match by match, exactly where their points came from
+   (correct result, score closeness, penalty, underdog multiplier) plus their
+   World Cup champion bonus. The totals reconcile with the leaderboard.
+4. **Reveal to everyone** — publishes the podium to the **Winners** page with a
+   celebration. Now every player can see the winners, their prizes, **and** the
+   same points breakdown for each winner. Before this, none of it is visible to
+   players.
+
+You can **Refresh from standings** (re-pull the top three; edited prizes are kept
+for anyone still in the same place) or **Hide** (take it back to a private draft)
+at any time.
+
+**Who can see a points breakdown:** admins can see anyone's at any time; a player
+can always see their own; everyone can see a player's breakdown once that player is
+a revealed winner.
 
 ---
 

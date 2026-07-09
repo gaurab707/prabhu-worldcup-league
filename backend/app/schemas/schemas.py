@@ -259,6 +259,56 @@ class WinnerUpsert(BaseModel):
     notes: Optional[str] = None
 
 
+class WinnerEdit(BaseModel):
+    """Admin edits to a single podium entry (prize is set/edited before reveal)."""
+    prize: Optional[str] = Field(default=None, max_length=120)
+    prize_amount: Optional[int] = Field(default=None, ge=0)
+    notes: Optional[str] = None
+
+
+class BreakdownMatch(BaseModel):
+    """One scored match's contribution to a player's total."""
+    match_id: int
+    home_team: str
+    away_team: str
+    home_flag: Optional[str] = None
+    away_flag: Optional[str] = None
+    kickoff_at: datetime
+    actual_home: Optional[int] = None
+    actual_away: Optional[int] = None
+    is_penalty: bool = False
+    actual_home_pen: Optional[int] = None
+    actual_away_pen: Optional[int] = None
+    pred_home: int
+    pred_away: int
+    pred_home_pen: Optional[int] = None
+    pred_away_pen: Optional[int] = None
+    outcome_points: float
+    closeness_points: float
+    penalty_points: float
+    difficulty_multiplier: float
+    points_awarded: float
+
+
+class ChampionContribution(BaseModel):
+    team_name: str
+    team_flag: Optional[str] = None
+    is_correct: bool
+    points_awarded: float
+
+
+class PointsBreakdown(BaseModel):
+    """Full explanation of where a player's points came from."""
+    user_id: int
+    name: str
+    department: Optional[str] = None
+    total_points: float
+    match_points: float
+    champion_points: float
+    matches: list[BreakdownMatch] = []
+    champion: Optional[ChampionContribution] = None
+
+
 class LeaderboardRow(BaseModel):
     rank: int
     user_id: int

@@ -1,7 +1,7 @@
 import axios from "axios";
 import type {
   AuthResponse, ChampionAdminSummary, ChampionPick, ChampionStatus,
-  DashboardStats, LeaderboardRow, Match, Payment, Prediction, PredictionStats,
+  DashboardStats, LeaderboardRow, Match, Payment, PointsBreakdown, Prediction, PredictionStats,
   PublicSettings, StaffDashboard, Team, User, Winner,
 } from "./types";
 
@@ -138,8 +138,13 @@ export const statsApi = {
 export const winnerApi = {
   list: () => api.get<Winner[]>("/winners").then((r) => r.data),
   adminList: () => api.get<Winner[]>("/winners/admin").then((r) => r.data),
+  generate: () => api.post<Winner[]>("/winners/generate").then((r) => r.data),
+  edit: (id: number, body: { prize?: string; prize_amount?: number; notes?: string }) =>
+    api.put<Winner>(`/winners/${id}`, body).then((r) => r.data),
   reveal: () => api.post<Winner[]>("/winners/reveal").then((r) => r.data),
   hide: () => api.post("/winners/hide").then((r) => r.data),
+  breakdown: (userId: number) =>
+    api.get<PointsBreakdown>(`/winners/breakdown/${userId}`).then((r) => r.data),
 };
 
 // ---- Champion (World Cup winner) prediction ----

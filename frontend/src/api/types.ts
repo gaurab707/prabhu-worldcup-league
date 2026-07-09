@@ -131,6 +131,47 @@ export interface Winner {
   published: boolean;
 }
 
+export interface BreakdownMatch {
+  match_id: number;
+  home_team: string;
+  away_team: string;
+  home_flag?: string | null;
+  away_flag?: string | null;
+  kickoff_at: string;
+  actual_home?: number | null;
+  actual_away?: number | null;
+  is_penalty: boolean;
+  actual_home_pen?: number | null;
+  actual_away_pen?: number | null;
+  pred_home: number;
+  pred_away: number;
+  pred_home_pen?: number | null;
+  pred_away_pen?: number | null;
+  outcome_points: number;
+  closeness_points: number;
+  penalty_points: number;
+  difficulty_multiplier: number;
+  points_awarded: number;
+}
+
+export interface ChampionContribution {
+  team_name: string;
+  team_flag?: string | null;
+  is_correct: boolean;
+  points_awarded: number;
+}
+
+export interface PointsBreakdown {
+  user_id: number;
+  name: string;
+  department?: string | null;
+  total_points: number;
+  match_points: number;
+  champion_points: number;
+  matches: BreakdownMatch[];
+  champion?: ChampionContribution | null;
+}
+
 export interface PredictionStats {
   total_predictions: number;
   most_predicted_teams: { name: string; count: number }[];

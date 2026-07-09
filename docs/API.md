@@ -68,13 +68,20 @@ Roles: **staff** (default) and **admin**. Endpoints marked 🔒 require admin.
 | GET | `/stats/predictions` 🔒 | Most/least predicted teams, common scorelines. |
 | GET | `/stats/leaderboard-extremes` 🔒 | Top/bottom performers. |
 
-## Winners (auto-calculated)
+## Winners + prizes + points breakdown
+Two-stage flow: the admin **generates** a private draft podium (with auto-suggested
+prizes), edits the prizes, then **reveals** it to everyone. The breakdown explains
+exactly where each player's points came from.
+
 | Method | Path | Description |
 |--------|------|-------------|
-| GET  | `/winners` | Published podium (visible to logged-in users); empty until revealed. |
-| GET  | `/winners/admin` 🔒 | All podium rows regardless of published state. |
-| POST | `/winners/reveal` 🔒 | Capture the current **top 3 from the leaderboard** and publish them. Returns the podium. |
-| POST | `/winners/hide` 🔒 | Unpublish (hide) the podium. |
+| GET  | `/winners` | Published podium (all verified users); empty until revealed. Includes each winner's prize. |
+| GET  | `/winners/admin` 🔒 | All podium rows (draft or published) with a `published` flag. |
+| POST | `/winners/generate` 🔒 | Build/refresh the **draft** podium (top 3, `published=false`, admin-only). Auto-fills a prize name + a suggested amount (50/30/20 split of the prize pool). Preserves a prize the admin already edited for a player still in the same slot. |
+| PUT  | `/winners/{id}` 🔒 | Edit one winner's `{prize, prize_amount, notes}` (before or after reveal). |
+| POST | `/winners/reveal` 🔒 | Publish the draft to everyone (generates one first if none exists). |
+| POST | `/winners/hide` 🔒 | Unpublish — back to a private draft (prizes retained). |
+| GET  | `/winners/breakdown/{user_id}` | Full points breakdown: every scored match (result/closeness/penalty/underdog components + total) and the champion bonus. **Visible to** admins (anyone), the player themselves, or everyone once that player is a *published* winner. |
 
 ## Champion (World Cup winner prediction) 🏆
 A **one-time, non-editable** pick for the tournament champion, with a bonus-point
