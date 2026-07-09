@@ -1,0 +1,27 @@
+# ---- Python / backend ----
+backend/.venv/
+**/__pycache__/
+*.py[cod]
+backend/.env
+backend/database/*.db
+backend/database/*.db-wal
+backend/database/*.db-shm
+backend/uploads/*
+!backend/uploads/.gitkeep
+.pytest_cache/
+
+# ---- Node / frontend ----
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+npm-debug.log*
+yarn-error.log*
+
+# ---- Editor / OS ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- Backups ----
+backups/

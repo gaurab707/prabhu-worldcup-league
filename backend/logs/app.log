@@ -1,0 +1,67 @@
+2026-07-09 09:42:36,538 | INFO     | httpx | HTTP Request: GET http://testserver/api/health "HTTP/1.1 200 OK"
+2026-07-09 09:42:36,918 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+2026-07-09 09:42:36,994 | INFO     | httpx | HTTP Request: GET http://testserver/api/stats/dashboard "HTTP/1.1 200 OK"
+2026-07-09 09:42:37,002 | INFO     | httpx | HTTP Request: GET http://testserver/api/matches "HTTP/1.1 200 OK"
+2026-07-09 09:45:46,877 | INFO     | bootstrap | Created default admin: admin@prabhucapital.com
+2026-07-09 09:45:46,901 | INFO     | bootstrap | Seeded 47 champion-pick teams
+2026-07-09 09:45:46,902 | INFO     | scheduler | Scheduler disabled by configuration.
+2026-07-09 09:45:46,902 | INFO     | main | Prabhu Capital World Cup Prediction League started.
+2026-07-09 09:45:47,213 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+2026-07-09 09:45:47,512 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/register "HTTP/1.1 201 Created"
+2026-07-09 09:45:47,811 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/register "HTTP/1.1 201 Created"
+2026-07-09 09:45:48,106 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/register "HTTP/1.1 201 Created"
+2026-07-09 09:45:48,114 | INFO     | httpx | HTTP Request: GET http://testserver/api/payments "HTTP/1.1 200 OK"
+2026-07-09 09:45:48,132 | INFO     | httpx | HTTP Request: POST http://testserver/api/payments/3/review "HTTP/1.1 200 OK"
+2026-07-09 09:45:48,143 | INFO     | httpx | HTTP Request: POST http://testserver/api/payments/1/review "HTTP/1.1 200 OK"
+2026-07-09 09:45:48,154 | INFO     | httpx | HTTP Request: POST http://testserver/api/payments/2/review "HTTP/1.1 200 OK"
+2026-07-09 09:45:48,446 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+2026-07-09 09:45:48,735 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,028 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,034 | INFO     | httpx | HTTP Request: GET http://testserver/api/champion/teams "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,044 | INFO     | httpx | HTTP Request: GET http://testserver/api/champion/status "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,064 | INFO     | httpx | HTTP Request: POST http://testserver/api/champion/pick "HTTP/1.1 201 Created"
+2026-07-09 09:45:49,078 | INFO     | httpx | HTTP Request: POST http://testserver/api/champion/pick "HTTP/1.1 201 Created"
+2026-07-09 09:45:49,092 | INFO     | httpx | HTTP Request: POST http://testserver/api/champion/pick "HTTP/1.1 201 Created"
+2026-07-09 09:45:49,098 | INFO     | httpx | HTTP Request: POST http://testserver/api/champion/pick "HTTP/1.1 409 Conflict"
+2026-07-09 09:45:49,107 | INFO     | httpx | HTTP Request: GET http://testserver/api/champion/admin/summary "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,141 | INFO     | httpx | HTTP Request: POST http://testserver/api/champion/admin/settle "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,150 | INFO     | httpx | HTTP Request: GET http://testserver/api/leaderboard "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,158 | INFO     | httpx | HTTP Request: GET http://testserver/api/champion/status "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,166 | INFO     | httpx | HTTP Request: GET http://testserver/api/champion/status "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,457 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,462 | INFO     | httpx | HTTP Request: POST http://testserver/api/champion/pick "HTTP/1.1 403 Forbidden"
+2026-07-09 09:45:49,488 | INFO     | httpx | HTTP Request: POST http://testserver/api/champion/admin/reopen "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,494 | INFO     | httpx | HTTP Request: GET http://testserver/api/leaderboard "HTTP/1.1 200 OK"
+2026-07-09 09:45:49,501 | INFO     | httpx | HTTP Request: GET http://testserver/api/champion/status "HTTP/1.1 200 OK"
+2026-07-09 09:46:22,863 | INFO     | bootstrap | Created default admin: admin@prabhucapital.com
+2026-07-09 09:46:22,885 | INFO     | bootstrap | Seeded 47 champion-pick teams
+2026-07-09 09:46:22,885 | INFO     | scheduler | Scheduler disabled by configuration.
+2026-07-09 09:46:22,886 | INFO     | main | Prabhu Capital World Cup Prediction League started.
+2026-07-09 09:46:23,187 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,476 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/register "HTTP/1.1 201 Created"
+2026-07-09 09:46:23,483 | INFO     | httpx | HTTP Request: GET http://testserver/api/payments "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,498 | INFO     | httpx | HTTP Request: POST http://testserver/api/payments/1/review "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,779 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,785 | INFO     | httpx | HTTP Request: GET http://testserver/api/champion/teams "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,804 | INFO     | httpx | HTTP Request: POST http://testserver/api/champion/pick "HTTP/1.1 201 Created"
+2026-07-09 09:46:23,827 | INFO     | httpx | HTTP Request: POST http://testserver/api/matches "HTTP/1.1 201 Created"
+2026-07-09 09:46:23,848 | INFO     | httpx | HTTP Request: POST http://testserver/api/predictions "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,873 | INFO     | results | Scored match 1 (2-1), consensus=1.00, 1 predictions
+2026-07-09 09:46:23,889 | INFO     | httpx | HTTP Request: PATCH http://testserver/api/matches/1 "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,899 | INFO     | httpx | HTTP Request: GET http://testserver/api/leaderboard "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,931 | INFO     | httpx | HTTP Request: POST http://testserver/api/champion/admin/settle "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,937 | INFO     | httpx | HTTP Request: GET http://testserver/api/leaderboard "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,945 | INFO     | results | Scored match 1 (2-1), consensus=1.00, 1 predictions
+2026-07-09 09:46:23,948 | INFO     | results | Scored 1 matches / 1 predictions.
+2026-07-09 09:46:23,954 | INFO     | httpx | HTTP Request: POST http://testserver/api/admin/recalculate "HTTP/1.1 200 OK"
+2026-07-09 09:46:23,960 | INFO     | httpx | HTTP Request: GET http://testserver/api/leaderboard "HTTP/1.1 200 OK"
+2026-07-09 09:52:27,747 | INFO     | bootstrap | Created default admin: admin@prabhucapital.com
+2026-07-09 09:52:27,770 | INFO     | bootstrap | Seeded 47 champion-pick teams
+2026-07-09 09:52:27,770 | INFO     | scheduler | Scheduler disabled by configuration.
+2026-07-09 09:52:27,770 | INFO     | main | Prabhu Capital World Cup Prediction League started.
+2026-07-09 09:57:42,034 | INFO     | bootstrap | Seeded 47 champion-pick teams
+2026-07-09 09:57:42,034 | INFO     | scheduler | Scheduler disabled by configuration.
+2026-07-09 09:57:42,034 | INFO     | main | Prabhu Capital World Cup Prediction League started.
+2026-07-09 09:57:42,330 | INFO     | httpx | HTTP Request: POST http://testserver/api/auth/login "HTTP/1.1 200 OK"
+2026-07-09 09:57:42,339 | INFO     | httpx | HTTP Request: GET http://testserver/api/champion/teams "HTTP/1.1 200 OK"
+2026-07-09 09:57:42,346 | INFO     | httpx | HTTP Request: GET http://testserver/api/champion/admin/summary "HTTP/1.1 200 OK"
