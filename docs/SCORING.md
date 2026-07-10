@@ -34,7 +34,7 @@ A **smooth, monotonic** reward for how near your predicted scoreline was to real
 blends two ideas:
 
 ```
-closeness = 40 × ( 0.7 × exp(−scoreError / 2.5)  +  0.3 × goalDiffFactor )
+closeness = 40 × ( 0.8 × exp(−scoreError / 1.8)  +  0.2 × goalDiffFactor )
 ```
 
 where
@@ -101,8 +101,8 @@ Assume the match finished **2–1** (a home win).
 | Your prediction | Outcome | Closeness | Penalty | Consensus | Multiplier | **Total** |
 |-----------------|--------:|----------:|--------:|----------:|-----------:|----------:|
 | 2–1 (exact)     | 40      | 40        | –       | 60%       | ×1.20      | **96.0**  |
-| 3–1 (right margin? no; right winner) | 40 | ~28 | – | 60% | ×1.20 | **~81** |
-| 1–1 (wrong: draw) | 0     | ~18       | –       | 60%       | ×1.00*     | **~18**   |
+| 3–1 (right winner, wrong margin) | 40 | ~23 | – | 60% | ×1.20 | **~76** |
+| 1–1 (wrong: draw) | 0     | ~23       | –       | 60%       | ×1.00*     | **~23**   |
 | 2–1 (exact), but an underdog call | 40 | 40 | – | 15% | ×1.43 | **~114** |
 
 \* Wrong-outcome predictions never receive the popularity bonus.

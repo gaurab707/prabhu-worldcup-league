@@ -78,8 +78,23 @@ function PredictionCard({ match }: { match: Match }) {
     <GlassCard sx={{ height: "100%" }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
         <Chip size="small" label={match.round_name || match.group_name || "Match"} />
-        <Countdown target={match.kickoff_at} locked={match.is_locked} />
+        {match.status === "live"
+          ? <Chip size="small" color="error" label="● LIVE" sx={{ fontWeight: 800 }} />
+          : <Countdown target={match.kickoff_at} locked={match.is_locked} />}
       </Stack>
+
+      {match.status === "live" && (
+        <Box sx={{ textAlign: "center", py: 1, mb: 1, borderRadius: 2,
+          background: `${BRAND.danger}14`, border: `1px solid ${BRAND.danger}55` }}>
+          <Typography variant="caption" color="error" fontWeight={700}>LIVE SCORE (updates automatically)</Typography>
+          <Typography variant="h4" fontWeight={800} sx={{ lineHeight: 1.1 }}>
+            {match.home_score ?? 0} – {match.away_score ?? 0}
+          </Typography>
+          {match.is_penalty && match.home_penalty != null && match.away_penalty != null && (
+            <Typography variant="caption" color="text.secondary">shootout {match.home_penalty}-{match.away_penalty}</Typography>
+          )}
+        </Box>
+      )}
 
       <Grid container alignItems="center" spacing={1} sx={{ my: 1 }}>
         <Grid item xs={4}>
@@ -177,7 +192,7 @@ function CompletedCard({ match }: { match: Match }) {
 
 export default function Predictions() {
   const [tab, setTab] = useState(0);
-  const { data: upcoming, isLoading } = useQuery({ queryKey: ["matches", "upcoming"], queryFn: () => matchApi.list({ upcoming: true }) });
+  const { data: upcoming, isLoading } = useQuery({ queryKey: ["matches", "upcoming"], queryFn: () => matchApi.list({ upcoming: true }), refetchInterval: 30_000 });
   const { data: finished } = useQuery({ queryKey: ["matches", "finished"], queryFn: () => matchApi.list({ status: "finished" }) });
 
   return (

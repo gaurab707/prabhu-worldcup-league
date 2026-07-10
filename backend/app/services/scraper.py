@@ -91,17 +91,29 @@ def fetch_events() -> list[dict[str, Any]]:
 _STATUS_MAP = {
     "Match Finished": MatchStatus.finished,
     "FT": MatchStatus.finished,
-    "AET": MatchStatus.finished,
+    "AET": MatchStatus.finished,             # decided after extra time
+    "After Extra Time": MatchStatus.finished,
+    "AP": MatchStatus.finished,              # decided after penalties
+    "PEN": MatchStatus.finished,
+    "After Penalties": MatchStatus.finished,
     "Not Started": MatchStatus.scheduled,
     "NS": MatchStatus.scheduled,
     "1H": MatchStatus.live,
     "2H": MatchStatus.live,
-    "HT": MatchStatus.live,
+    "HT": MatchStatus.live,                  # half time
+    "ET": MatchStatus.live,                  # extra time in progress
+    "BT": MatchStatus.live,                  # break before extra time
+    "P": MatchStatus.live,                   # penalty shootout in progress
     "LIVE": MatchStatus.live,
     "Postponed": MatchStatus.postponed,
     "PST": MatchStatus.postponed,
     "Cancelled": MatchStatus.cancelled,
+    "Abandoned": MatchStatus.cancelled,
+    "ABD": MatchStatus.cancelled,
 }
+
+# Status strings that mean the match was (or is being) decided by a shootout.
+_PENALTY_STATUSES = {"AP", "PEN", "After Penalties", "P"}
 
 
 def _parse_kickoff(event: dict) -> Optional[datetime]:
@@ -136,6 +148,28 @@ def _to_int(v: Any) -> Optional[int]:
         return None
 
 
+def _parse_penalties(event: dict) -> tuple[bool, Optional[int], Optional[int]]:
+    """Detect a penalty shootout and, if present, its score.
+
+    TheSportsDB's free feed doesn't guarantee a penalty field, so we (a) flag a
+    shootout from the status text, and (b) read the shootout score from any of a
+    few possible field names when the feed provides them. When the score isn't in
+    the feed we still set the flag, so the shootout shows as pending and the admin
+    can enter the two numbers.
+    """
+    status = (event.get("strStatus") or "").strip()
+    is_pen = status in _PENALTY_STATUSES
+    for hk, ak in (
+        ("intHomeScorePenalty", "intAwayScorePenalty"),
+        ("intHomePenalty", "intAwayPenalty"),
+        ("strHomePenalty", "strAwayPenalty"),
+    ):
+        h, a = _to_int(event.get(hk)), _to_int(event.get(ak))
+        if h is not None and a is not None:
+            return True, h, a
+    return is_pen, None, None
+
+
 def normalise_event(event: dict) -> Optional[dict]:
     """Turn a raw TheSportsDB event into our internal shape, or None if unusable."""
     home = (event.get("strHomeTeam") or "").strip()
@@ -146,6 +180,7 @@ def normalise_event(event: dict) -> Optional[dict]:
     if kickoff is None:
         return None
     status = _STATUS_MAP.get((event.get("strStatus") or "").strip(), MatchStatus.scheduled)
+    is_pen, home_pen, away_pen = _parse_penalties(event)
     return {
         "external_id": str(event.get("idEvent")),
         "home": home,
@@ -156,8 +191,13 @@ def normalise_event(event: dict) -> Optional[dict]:
         "venue": event.get("strVenue"),
         "round_name": event.get("strStage") or event.get("intRound"),
         "status": status,
+        # intHomeScore/intAwayScore is the on-field score (includes extra-time
+        # goals for AET matches); we sync it live and when finished.
         "home_score": _to_int(event.get("intHomeScore")),
         "away_score": _to_int(event.get("intAwayScore")),
+        "is_penalty": is_pen,
+        "home_penalty": home_pen,
+        "away_penalty": away_pen,
     }
 
 
@@ -206,21 +246,39 @@ def _upsert_match(db: Session, ev: dict) -> bool:
         db.add(match)
         changed = True
     else:
-        # Never rewrite an admin-finalised match; only advance data forward.
+        # Follow the source while WE haven't finalised the match; never downgrade
+        # a finished match back to live/scheduled. Kickoff only moves before start.
         if match.status != MatchStatus.finished:
-            if match.kickoff_at != ev["kickoff_at"]:
+            if match.status == MatchStatus.scheduled and match.kickoff_at != ev["kickoff_at"]:
                 match.kickoff_at = ev["kickoff_at"]; changed = True
-            if match.status != ev["status"]:
+            if ev["status"] != match.status:
                 match.status = ev["status"]; changed = True
 
-    # Result: fill scores when the source reports a finished match.
-    if ev["status"] == MatchStatus.finished and ev["home_score"] is not None:
+    # --- On-field score: kept in sync LIVE and when finished. The source score
+    #     already includes extra-time goals (AET), so ET needs no special case. ---
+    if ev["home_score"] is not None and ev["away_score"] is not None:
         if match.home_score != ev["home_score"] or match.away_score != ev["away_score"]:
             match.home_score = ev["home_score"]
             match.away_score = ev["away_score"]
-            match.status = MatchStatus.finished
-            match.scored = False  # ask the scorer to (re)award this match
+            match.scored = False        # (re)award once the match settles
             changed = True
+
+    # --- Penalty shootout: flag it, and store the shootout score when available. ---
+    if ev.get("is_penalty") and not match.is_penalty:
+        match.is_penalty = True; changed = True
+    if ev.get("home_penalty") is not None and ev.get("away_penalty") is not None:
+        if match.home_penalty != ev["home_penalty"] or match.away_penalty != ev["away_penalty"]:
+            match.home_penalty = ev["home_penalty"]
+            match.away_penalty = ev["away_penalty"]
+            match.scored = False
+            changed = True
+
+    # --- Finished: mark it (status finish) and queue automatic (re)scoring. ---
+    if ev["status"] == MatchStatus.finished and match.status != MatchStatus.finished:
+        match.status = MatchStatus.finished
+        match.scored = False
+        changed = True
+
     return changed
 
 

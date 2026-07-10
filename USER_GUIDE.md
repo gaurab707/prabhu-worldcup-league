@@ -79,17 +79,33 @@ Everything about fixtures is on **Admin → Manage Games**. Top-right buttons:
 - **New match** — add a game by hand: home team, away team, kickoff date/time,
   round (e.g. "Group Stage"), venue. This is the most **reliable** way to add the
   exact games you want.
-- **Sync now** — pull fixtures and results from the internet automatically. To
-  keep a league that starts mid-tournament clean, **only games in the future are
-  added** — already-finished games are ignored.
+- **Sync now** — pull fixtures **and live/final scores** from the internet
+  automatically. To keep a league that starts mid-tournament clean, **only games
+  in the future are added** — already-finished games are ignored.
 - **Clear all** — wipe **every** fixture, prediction and awarded point and reset
   all totals to zero (teams are kept). Use this to start from a clean slate.
 
+**Scores update themselves — you usually don't touch them.** Once a game is
+synced, the system keeps its score in sync **automatically**: it updates the
+**live score while the match is being played**, follows **extra time** (the score
+shown already includes extra-time goals), flags a **penalty shootout**, and the
+moment the source marks the game over it sets the status to **finished** and
+**awards everyone's points automatically** — no manual entry needed. During a live
+match the app checks more often (about every 2 minutes) so scores stay fresh;
+players see a red **LIVE** score on the fixture that refreshes on its own.
+
+Two things to know: the free data source doesn't always publish the **shootout
+score** (the 4–3 part) — when it doesn't, the game still shows "decided by
+penalties" and you can type just those two numbers via **Enter result**. And for
+a game you added or corrected **by hand**, prefer entering its result manually,
+since a later auto-sync of the same fixture will follow the data source.
+
 For each game in the list you can:
 
-- **Enter result** (the scoreboard icon) — type the final score and save. The game
-  is marked finished and **everyone's points are calculated instantly** — staff see
-  their points immediately on their Completed tab and the Leaderboard updates.
+- **Enter result / edit** (the scoreboard icon) — correct the **kickoff time**, or
+  type the final score (and shootout) and save. Entering a score marks the game
+  finished and **everyone's points are calculated instantly** — staff see their
+  points immediately on their Completed tab and the Leaderboard updates.
 - **Lock / unlock** predictions manually.
 - **Reveal predictions** (after a game is finished) if you want staff to see each
   other's picks for that game.

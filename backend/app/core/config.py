@@ -52,7 +52,8 @@ class Settings(BaseSettings):
 
     # --- Scheduler / Scraper --------------------------------------------
     SCHEDULER_ENABLED: bool = True
-    SCHEDULER_INTERVAL_MINUTES: int = 15
+    SCHEDULER_INTERVAL_MINUTES: int = 10        # when nothing is live
+    SCHEDULER_LIVE_INTERVAL_MINUTES: int = 2    # faster polling while a match is live
     # Which competition to pull from TheSportsDB (free API; "123" is the current public key)
     SPORTSDB_API_KEY: str = "123"
     SPORTSDB_LEAGUE_ID: str = "4429"          # FIFA World Cup league id on TheSportsDB

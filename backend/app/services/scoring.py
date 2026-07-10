@@ -46,10 +46,10 @@ from typing import Iterable, Optional
 OUTCOME_MAX = 40.0
 CLOSENESS_MAX = 40.0
 PENALTY_MAX = 20.0
-CLOSENESS_TAU = 2.5        # decay constant for scoreline error
+CLOSENESS_TAU = 1.8        # decay constant for scoreline error
 GOAL_DIFF_TAU = 2.0        # decay constant for goal-difference error
-CLOSENESS_SCORE_WEIGHT = 0.7
-CLOSENESS_GD_WEIGHT = 0.3
+CLOSENESS_SCORE_WEIGHT = 0.8
+CLOSENESS_GD_WEIGHT = 0.2
 POPULARITY_ALPHA = 0.5     # max +50% underdog bonus
 
 
@@ -73,7 +73,12 @@ def outcome_points(pred_h: int, pred_a: int, act_h: int, act_a: int) -> float:
 
 
 def closeness_points(pred_h: int, pred_a: int, act_h: int, act_a: int) -> float:
-    """Smooth reward (0..CLOSENESS_MAX) for a close scoreline."""
+    """Smooth reward (0..CLOSENESS_MAX) for a close scoreline.
+
+    Formula:  closeness = 40 * (0.8 * e^(-scoreError/1.8) + 0.2 * goalDiffFactor)
+    where scoreError = |pred_h-act_h| + |pred_a-act_a| and goalDiffFactor is 1.0
+    when the predicted goal difference is exact, decaying otherwise.
+    """
     score_err = abs(pred_h - act_h) + abs(pred_a - act_a)
     score_factor = math.exp(-score_err / CLOSENESS_TAU)  # 1.0 at exact
 
