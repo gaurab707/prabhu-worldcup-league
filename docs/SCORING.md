@@ -34,7 +34,7 @@ A **smooth, monotonic** reward for how near your predicted scoreline was to real
 blends two ideas:
 
 ```
-closeness = 40 × ( 0.8 × exp(−scoreError / 1.8)  +  0.2 × goalDiffFactor )
+closeness = 40 × ( 0.7 × exp(−scoreError / 1.5)  +  0.3 × goalDiffFactor )
 ```
 
 where
