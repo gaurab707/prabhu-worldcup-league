@@ -219,14 +219,17 @@ def _upsert_match(db: Session, ev: dict) -> bool:
     """Insert or update a single match. Returns True if a change was made."""
     match = db.scalar(select(Match).where(Match.external_id == ev["external_id"]))
 
-    # For a league that starts mid-tournament, do not ADD games that are already
-    # in the past (nobody could have predicted them). Existing matches always
-    # continue to update (so a game we tracked still gets its final score).
+    # For a league that starts mid-tournament, do not ADD games nobody could have
+    # predicted. The stable signal for that is the match being *finished* - NOT a
+    # "kickoff < now" test. Keying the skip off the clock is a trap: a match that
+    # is skipped is never inserted, so every later scrape still sees it as new and
+    # skips it again -> it is dropped permanently. A single scrape that lands even
+    # a second after kickoff (app was down, fixture published late, or an early
+    # kickoff that is already past in UTC) would erase an otherwise-upcoming match
+    # forever. So we only refuse games that have already finished; upcoming and
+    # in-progress games are always ingested and simply lock at kickoff as usual.
     if match is None and settings.SPORTSDB_INGEST_FUTURE_ONLY:
-        ko = ev["kickoff_at"]
-        if ko.tzinfo is None:
-            ko = ko.replace(tzinfo=timezone.utc)
-        if ko < datetime.now(timezone.utc):
+        if ev.get("status") == MatchStatus.finished:
             return False
 
     home = _get_or_create_team(db, ev["home"], ev["home_badge"])
