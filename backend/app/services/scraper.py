@@ -215,9 +215,72 @@ def _get_or_create_team(db: Session, name: str, badge: Optional[str]) -> Team:
     return team
 
 
+# How far apart the admin's entered kickoff and the feed's kickoff may be and
+# still count as "the same fixture" when adopting a hand-created match. Two days
+# is comfortably wide enough to absorb time-zone/entry differences while still
+# being unique for a given pair of teams in a tournament.
+_ADOPT_WINDOW_SECONDS = 48 * 3600
+
+
+def _as_utc(dt: datetime) -> datetime:
+    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+
+
+def _flip_event(ev: dict) -> dict:
+    """Return a copy of a feed event with home/away (and their scores) swapped.
+
+    Used when an admin entered the two teams in the opposite order to the feed:
+    we keep the admin's orientation (predictions are stored against it) and flip
+    the incoming data so it is applied the right way round.
+    """
+    e = dict(ev)
+    e["home"], e["away"] = ev["away"], ev["home"]
+    e["home_badge"], e["away_badge"] = ev.get("away_badge"), ev.get("home_badge")
+    e["home_score"], e["away_score"] = ev.get("away_score"), ev.get("home_score")
+    e["home_penalty"], e["away_penalty"] = ev.get("away_penalty"), ev.get("home_penalty")
+    return e
+
+
+def _find_manual_match(db: Session, team_a_id: int, team_b_id: int, kickoff: datetime):
+    """Find an admin-created match (no external_id) for the same fixture.
+
+    Matches the same *pair* of teams (either home/away orientation) with a
+    kickoff within ``_ADOPT_WINDOW_SECONDS``. Returns the Match or None.
+    """
+    ko = _as_utc(kickoff)
+    pair = {team_a_id, team_b_id}
+    for m in db.scalars(select(Match).where(Match.external_id.is_(None))).all():
+        if {m.home_team_id, m.away_team_id} != pair or m.kickoff_at is None:
+            continue
+        if abs((_as_utc(m.kickoff_at) - ko).total_seconds()) <= _ADOPT_WINDOW_SECONDS:
+            return m
+    return None
+
+
 def _upsert_match(db: Session, ev: dict) -> bool:
     """Insert or update a single match. Returns True if a change was made."""
     match = db.scalar(select(Match).where(Match.external_id == ev["external_id"]))
+
+    # ADOPT a hand-created match, if one exists for this fixture. An admin can add
+    # a match by hand before the data provider lists it (the free feed only exposes
+    # one upcoming game at a time). That row has no external_id; when the feed finally
+    # carries the fixture we link it to that row and keep updating it live - instead
+    # of inserting a duplicate. We look teams up by name here (without creating them)
+    # and adopt regardless of the feed status, so a result flows into the row too.
+    adopted = False
+    if match is None:
+        ht = db.scalar(select(Team).where(Team.name == ev["home"]))
+        at = db.scalar(select(Team).where(Team.name == ev["away"]))
+        if ht is not None and at is not None:
+            cand = _find_manual_match(db, ht.id, at.id, ev["kickoff_at"])
+            if cand is not None:
+                cand.external_id = ev["external_id"]
+                # If the admin entered the teams the other way round, keep their
+                # orientation and flip the feed data to match.
+                if cand.home_team_id == at.id and cand.away_team_id == ht.id:
+                    ev = _flip_event(ev)
+                match = cand
+                adopted = True
 
     # For a league that starts mid-tournament, do not ADD games nobody could have
     # predicted. The stable signal for that is the match being *finished* - NOT a
@@ -235,7 +298,7 @@ def _upsert_match(db: Session, ev: dict) -> bool:
     home = _get_or_create_team(db, ev["home"], ev["home_badge"])
     away = _get_or_create_team(db, ev["away"], ev["away_badge"])
 
-    changed = False
+    changed = adopted   # linking a hand-created match to the feed is itself a change
     if match is None:
         match = Match(
             external_id=ev["external_id"],
